@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends, status, HTTPException
 from sqlmodel import  select
 import datetime
 from database import create_db_and_table, SessionDep
-from schemas import MeterCreate, TokenCreate
+from schemas import MeterCreate, TokenCreate, TokenResponse
 from models import Meter, Token
 import random
 
@@ -24,30 +24,35 @@ def add_meter (meter : MeterCreate, session : SessionDep):
 
 @app.get("/meter/{meter_id}", response_model=MeterCreate)
 def  get_meter ( meter_id : int, session : SessionDep):
-    statement = select (Meter).where(Meter.meter_no == id)
+    statement = select (Meter).where(Meter.meter_no == meter_id)
     meter = session.exec(statement).first()
     
     return meter
 
-@app.post("/token/", response_model=TokenCreate)
+@app.post("/token/", response_model=TokenResponse)
 def create_token(token_data : TokenCreate, session : SessionDep, meter : Annotated[Meter, Depends(get_meter)]):
-    token = random.randint(10**19, 10**20 - 1)
+    print("start function")
+    token_val = str(random.randint(10**19, 10**20 - 1))
     meter_number = meter.meter_no
     kwh = 50.823
     price = token_data.price
     unit = price / kwh
     record = Token(
-        token = token,
+        token = token_val,
         meter_no = meter_number,
         price = token_data.price,
         unit = unit   
     )
+    print (price)
+    print (meter_number)
+    print (token_val)
+    print (unit)
     session.add(record)
     session.commit()
     session.refresh(record)
     
-    print( f" Utility Toens is: {token}")
-    print (f"You get {kwh} units")
+    print( f" Utility Toens is: {token_val}")
+    print (f"You get {unit} units")
     
     return record
     # token = Token(**token.model_dump())
