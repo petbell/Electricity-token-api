@@ -3,6 +3,7 @@ from sqlmodel import SQLModel
 class MeterCreate(SQLModel):
     meter_no : int 
     customer_name : str 
+    email : str
     address : str 
 
 class TokenCreate(SQLModel):
@@ -13,6 +14,6 @@ class TokenCreate(SQLModel):
 class TokenResponse(SQLModel):
     id : int
     token : str
-    meter_no : int  
+    meter_no : int
     price : float 
     unit : float 

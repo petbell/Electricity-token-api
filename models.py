@@ -7,6 +7,7 @@ class Meter(SQLModel, table=True):
     id : Optional [int ] = Field(default=None, primary_key = True)
     meter_no : int = Field(index= True, unique=True)
     customer_name : str = Field()
+    email : str = Field()
     address : str = Field()
     
     
